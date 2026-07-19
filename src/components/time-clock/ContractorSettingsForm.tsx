@@ -32,8 +32,12 @@ export default function ContractorSettingsForm({ initialSettings }: Props) {
     setSuccess(false);
     setError(null);
     try {
-      await saveContractorSettings(formData);
-      setSuccess(true);
+      const res = await saveContractorSettings(formData);
+      if (res && !res.success) {
+        setError(res.error || 'Failed to save settings');
+      } else {
+        setSuccess(true);
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to save settings');
     } finally {
