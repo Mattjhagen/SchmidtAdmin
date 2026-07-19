@@ -24,7 +24,7 @@ export default async function TimeClockPage() {
   // Fetch contractor settings to see if they are configured
   const { data: settings } = await supabase
     .from('contractor_settings')
-    .select('id')
+    .select('user_id')
     .eq('user_id', user.id)
     .single();
 

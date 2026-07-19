@@ -47,9 +47,19 @@ export default function TimesheetList({ periods, submissions, openEntries }: Pro
     setLoading('submit');
     setError(null);
     try {
-      const sub = await submitTimesheet(weekStartStr, weekEndStr);
+      const res = await submitTimesheet(weekStartStr, weekEndStr);
+      if (res && res.success === false) {
+        setError(res.error || 'Failed to submit timesheet');
+        return;
+      }
       // Auto trigger email delivery Action
-      await sendTimesheetSubmission(sub.id);
+      const subId = res?.data?.id;
+      if (subId) {
+        const sendRes = await sendTimesheetSubmission(subId);
+        if (sendRes && sendRes.success === false) {
+          setError(sendRes.error || 'Failed to send timesheet email');
+        }
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to submit timesheet');
     } finally {

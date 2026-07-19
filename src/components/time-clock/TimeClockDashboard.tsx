@@ -30,7 +30,10 @@ export default function TimeClockDashboard({ activeEntry }: Props) {
     setLoading(true);
     setError(null);
     try {
-      await actionFn();
+      const res = await actionFn();
+      if (res && res.success === false) {
+        setError(res.error || 'An error occurred.');
+      }
     } catch (err: any) {
       setError(err.message || 'An error occurred.');
     } finally {
