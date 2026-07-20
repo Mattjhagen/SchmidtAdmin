@@ -253,17 +253,12 @@ export default function ReportsPage() {
     setActionMessage(null);
 
     try {
-      const html2canvasModule = await import('html2canvas');
-      const html2canvas = html2canvasModule.default || html2canvasModule;
+      const htmlToImage = await import('html-to-image');
       
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
+      const imgData = await htmlToImage.toPng(element, {
+        pixelRatio: 2,
         backgroundColor: '#ffffff'
       });
-
-      const imgData = canvas.toDataURL('image/png');
       
       const jspdfModule = (await import('jspdf')) as any;
       const jsPDF = jspdfModule.jsPDF || jspdfModule.default;
@@ -272,7 +267,7 @@ export default function ReportsPage() {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       
       const imgWidth = pdfWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const imgHeight = (element.offsetHeight * imgWidth) / element.offsetWidth;
       
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       pdf.save(`Schmidt-Construction-1099-${type}-report-${type === 'daily' ? selectedDate : selectedWeekStart}.pdf`);
