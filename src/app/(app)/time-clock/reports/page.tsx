@@ -1,5 +1,6 @@
 'use client';
 
+// Trigger build redeploy after repository connection reset
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { getSupabaseBrowser } from '@/lib/supabaseClient';
