@@ -380,9 +380,9 @@ export default function ProposalEditor({
       }
 
       router.push(`/projects/${project?.id}`);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error saving proposal. Check console.');
+      alert(`Error saving proposal: ${err.message || JSON.stringify(err)}`);
     } finally {
       setLoading(false);
     }
