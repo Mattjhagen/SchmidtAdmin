@@ -264,8 +264,8 @@ export default function ReportsPage() {
 
       const imgData = canvas.toDataURL('image/png');
       
-      const jspdfModule = await import('jspdf');
-      const jsPDF = jspdfModule.jsPDF || (jspdfModule.default ? (jspdfModule.default.jsPDF || jspdfModule.default) : jspdfModule);
+      const jspdfModule = (await import('jspdf')) as any;
+      const jsPDF = jspdfModule.jsPDF || jspdfModule.default;
       
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
