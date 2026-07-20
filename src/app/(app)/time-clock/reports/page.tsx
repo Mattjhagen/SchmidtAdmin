@@ -252,7 +252,9 @@ export default function ReportsPage() {
     setActionMessage(null);
 
     try {
-      const html2canvas = (await import('html2canvas')).default;
+      const html2canvasModule = await import('html2canvas');
+      const html2canvas = html2canvasModule.default || html2canvasModule;
+      
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
@@ -261,11 +263,12 @@ export default function ReportsPage() {
       });
 
       const imgData = canvas.toDataURL('image/png');
-      const { jsPDF } = await import('jspdf');
+      
+      const jspdfModule = await import('jspdf');
+      const jsPDF = jspdfModule.jsPDF || (jspdfModule.default ? (jspdfModule.default.jsPDF || jspdfModule.default) : jspdfModule);
       
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
       
       const imgWidth = pdfWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -276,7 +279,7 @@ export default function ReportsPage() {
       setActionMessage({ type: 'success', text: 'PDF report generated and downloaded successfully!' });
     } catch (err: any) {
       console.error(err);
-      setActionMessage({ type: 'error', text: 'Failed to generate PDF document.' });
+      setActionMessage({ type: 'error', text: `Failed to generate PDF: ${err.message || err.toString()}` });
     } finally {
       setActionLoading(null);
     }
