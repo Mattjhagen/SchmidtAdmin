@@ -12,6 +12,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     const user = auth.getSessionUser();
     if (!user) {
       router.push('/login');
+    } else if (user.forcePasswordChange) {
+      router.push('/change-password');
     } else {
       setIsAuthenticated(true);
     }

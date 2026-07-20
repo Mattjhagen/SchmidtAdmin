@@ -2,6 +2,7 @@ import { getSupabaseServer } from '@/lib/supabaseServer';
 import { redirect } from 'next/navigation';
 import TimeClockDashboard from '@/components/time-clock/TimeClockDashboard';
 import Link from 'next/link';
+import { isAdmin } from '@/lib/auth';
 
 export default async function TimeClockPage() {
   const supabase = await getSupabaseServer();
@@ -20,6 +21,8 @@ export default async function TimeClockPage() {
       </div>
     );
   }
+
+  const isUserAdmin = isAdmin(user.email);
 
   // Fetch contractor settings to see if they are configured
   const { data: settings } = await supabase
@@ -47,12 +50,24 @@ export default async function TimeClockPage() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Time Clock</h1>
-        <div className="space-x-4">
-          <Link href="/time-clock/timesheets" className="text-blue-600 hover:underline">Timesheets</Link>
-          <Link href="/time-clock/reports" className="text-blue-600 hover:underline">Tax Reports</Link>
-          <Link href="/time-clock/settings" className="text-slate-600 hover:underline">Settings</Link>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 pb-4 border-b border-slate-200">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Time Clock</h1>
+          <p className="text-xs text-slate-500 mt-1">
+            {isUserAdmin ? "Logged in as Admin (Full Timesheet Controls)" : "Logged in as Contractor"}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-4 mt-4 md:mt-0 text-sm">
+          <Link href="/time-clock/timesheets" className="text-blue-600 hover:underline font-medium">My Timesheet</Link>
+          <Link href="/time-clock/reports" className="text-blue-600 hover:underline font-medium">My Reports</Link>
+          <Link href="/time-clock/settings" className="text-slate-600 hover:underline font-medium">My Settings</Link>
+          {isUserAdmin && (
+            <>
+              <span className="text-slate-300">|</span>
+              <Link href="/time-clock/onboard" className="text-amber-600 hover:underline font-semibold">Onboard Employee</Link>
+              <Link href="/time-clock/admin-timesheets" className="text-amber-600 hover:underline font-semibold">Admin Panel</Link>
+            </>
+          )}
         </div>
       </div>
 

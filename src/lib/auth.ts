@@ -10,10 +10,23 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = isSupabaseConfigured ? createBrowserClient(supabaseUrl, supabaseAnonKey) : null;
 
 
+export const ADMIN_EMAILS = [
+  'matty@purepulse.one',
+  'admin@schmidt-construction.com',
+  'mike@walls2.com',
+  'mikiel@schmidt-construction.com'
+];
+
+export function isAdmin(email?: string): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.toLowerCase().trim());
+}
+
 export interface SessionUser {
   email: string;
   role: 'estimator' | 'admin';
   name: string;
+  forcePasswordChange?: boolean;
 }
 
 function setAuthCookie(user?: SessionUser) {
@@ -66,8 +79,9 @@ export const auth = {
 
       const user: SessionUser = {
         email: data.user.email || email,
-        role: 'estimator', // default role
-        name: data.user.user_metadata?.name || 'Estimator'
+        role: isAdmin(data.user.email || email) ? 'admin' : 'estimator',
+        name: data.user.user_metadata?.name || 'Estimator',
+        forcePasswordChange: !!data.user.user_metadata?.force_password_change
       };
 
       localStorage.setItem('schmidt_auth_session', JSON.stringify(user));
@@ -79,8 +93,9 @@ export const auth = {
       const finalEmail = email || 'estimator@schmidt.com';
       const user: SessionUser = {
         email: finalEmail,
-        role: 'estimator',
-        name: finalEmail.split('@')[0].toUpperCase()
+        role: isAdmin(finalEmail) ? 'admin' : 'estimator',
+        name: finalEmail.split('@')[0].toUpperCase(),
+        forcePasswordChange: false
       };
 
       localStorage.setItem('schmidt_auth_session', JSON.stringify(user));

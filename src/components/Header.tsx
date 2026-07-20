@@ -3,14 +3,21 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { isDemoMode } from '../lib/db';
 import Image from 'next/image';
 import { Users, Database, Settings, Award, Globe, Clock, LucideIcon } from 'lucide-react';
+import { auth, SessionUser } from '@/lib/auth';
 
 export default function Header() {
   const pathname = usePathname();
+  const [user, setUser] = useState<SessionUser | null>(null);
+
+  useEffect(() => {
+    setUser(auth.getSessionUser());
+  }, [pathname]);
 
   // If the user is on the client portal, we hide the admin header and navigation entirely.
   const isPortal = pathname?.startsWith('/portal');
@@ -89,8 +96,10 @@ export default function Header() {
             
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2 text-xs bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg">
-                <span className="h-2 w-2 rounded-full bg-blue-500" />
-                <span className="font-medium text-slate-300">Estimator Mode</span>
+                <span className={`h-2 w-2 rounded-full ${user?.role === 'admin' ? 'bg-amber-500' : 'bg-blue-500'}`} />
+                <span className="font-medium text-slate-300">
+                  {user?.role === 'admin' ? 'Admin Mode' : 'Estimator Mode'}
+                </span>
               </div>
               <button
                 onClick={async () => {

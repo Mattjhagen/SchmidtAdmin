@@ -35,8 +35,12 @@ function LoginForm() {
     try {
       setLoading(true);
       setError(null);
-      await auth.login(email, password);
-      router.push(redirect);
+      const user = await auth.login(email, password);
+      if (user.forcePasswordChange) {
+        router.push('/change-password');
+      } else {
+        router.push(redirect);
+      }
     } catch (err: any) {
       console.error(err);
       setError(err?.message || 'Invalid email or password. Please try again.');
