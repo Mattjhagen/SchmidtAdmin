@@ -924,9 +924,10 @@ export const db = {
   },
 
   async createProject(project: Omit<Project, 'id' | 'created_at'>): Promise<Project> {
-    const newProject: Project = {
+    const newProject: any = {
       ...project,
       id: generateUUID(),
+      desired_start_date: project.desired_start_date === '' ? null : project.desired_start_date,
       created_at: new Date().toISOString()
     };
 
@@ -944,8 +945,13 @@ export const db = {
   },
 
   async updateProject(id: string, updates: Partial<Omit<Project, 'id' | 'created_at'>>): Promise<Project> {
+    const cleanUpdates: any = { ...updates };
+    if (cleanUpdates.desired_start_date === '') {
+      cleanUpdates.desired_start_date = null;
+    }
+
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.from('projects').update(updates).eq('id', id).select().single();
+      const { data, error } = await supabase.from('projects').update(cleanUpdates).eq('id', id).select().single();
       if (error) throw error;
       return data;
     } else {
@@ -953,7 +959,7 @@ export const db = {
       const list = getLocalStorageData<Project[]>('schmidt_projects', []);
       const index = list.findIndex((p) => p.id === id);
       if (index === -1) throw new Error('Project not found');
-      const updated = { ...list[index], ...updates };
+      const updated = { ...list[index], ...cleanUpdates };
       list[index] = updated;
       setLocalStorageData('schmidt_projects', list);
       return updated;
