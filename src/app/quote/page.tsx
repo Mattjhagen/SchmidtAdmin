@@ -101,6 +101,7 @@ export default function QuotePage() {
     fd.append('name', form.name);
     fd.append('phone', form.phone);
     fd.append('email', form.email);
+    fd.append('address', form.address);
     fd.append('service', selectedService?.label || form.service);
     fd.append('body', body);
 

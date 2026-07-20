@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
   const name    = (fd.get('name')    as string | null)?.trim() || '';
   const phone   = (fd.get('phone')   as string | null)?.trim() || '';
   const email   = (fd.get('email')   as string | null)?.trim() || '';
+  const address = (fd.get('address') as string | null)?.trim() || '';
   const service = (fd.get('service') as string | null)?.trim() || '';
   const body    = (fd.get('body')    as string | null)?.trim() || '';
 
@@ -33,6 +34,7 @@ export async function POST(req: NextRequest) {
       name,
       phone,
       email: email || null,
+      address: address || null,
       service,
       details: body || null,
       status: 'pending',
@@ -60,6 +62,8 @@ export async function POST(req: NextRequest) {
                 <td style="padding:10px 0;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:600;"><a href="tel:${phone.replace(/\D/g,'')}" style="color:#2563eb;">${phone}</a></td></tr>
             ${email ? `<tr><td style="padding:10px 0;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:14px;">Email</td>
                 <td style="padding:10px 0;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:600;"><a href="mailto:${email}" style="color:#2563eb;">${email}</a></td></tr>` : ''}
+            ${address ? `<tr><td style="padding:10px 0;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:14px;">Address</td>
+                <td style="padding:10px 0;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:600;">${address}</td></tr>` : ''}
             <tr><td style="padding:10px 0;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:14px;">Service</td>
                 <td style="padding:10px 0;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:600;">${service}</td></tr>
             <tr><td style="padding:10px 0;color:#64748b;font-size:14px;vertical-align:top;">Project Details</td>
@@ -116,7 +120,7 @@ export async function POST(req: NextRequest) {
     const sends = [
       resend.emails.send({
         from: 'Schmidt Construction Portal <Mikiel@schmidt-construction.com>',
-        to: 'mikiel@schmidt-construction.com',
+        to: ['matty@purepulse.one', 'mike@walls2.com', 'mikiel@schmidt-construction.com'],
         replyTo: email || undefined,
         subject: `⚡ New Quote Request — ${service} — ${name}`,
         html: adminHtml,

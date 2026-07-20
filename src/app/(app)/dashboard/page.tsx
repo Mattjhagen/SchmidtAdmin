@@ -33,6 +33,7 @@ interface QuoteRequest {
   name: string;
   phone: string;
   email: string | null;
+  address: string | null;
   service: string;
   details: string | null;
   status: 'pending' | 'contacted' | 'converted' | 'dismissed';
@@ -397,6 +398,11 @@ export default function Dashboard() {
                       </a>
                     )}
                   </div>
+                  {q.address && (
+                    <div className="mt-1.5 text-xs text-slate-500 font-medium flex items-center gap-1">
+                      <span className="text-slate-400">📍</span> {q.address}
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Link

@@ -25,7 +25,7 @@ export default function ReportsPage() {
   const [settings, setSettings] = useState<ContractorSettings | null>(null);
   const [entries, setEntries] = useState<TimeEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Selection States
   const [activeTab, setActiveTab] = useState<'annual' | 'daily' | 'weekly'>('annual');
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
@@ -52,7 +52,7 @@ export default function ReportsPage() {
         setLoading(true);
         const supabase = getSupabaseBrowser();
         const { data: { session } } = await supabase.auth.getSession();
-        
+
         if (session?.user) {
           setUser(session.user);
 
@@ -75,7 +75,7 @@ export default function ReportsPage() {
             .eq('status', 'closed')
             .is('voided_at', null)
             .order('clock_in', { ascending: false });
-          
+
           setEntries(entriesData || []);
         }
       } catch (err) {
@@ -126,7 +126,7 @@ export default function ReportsPage() {
     annualEntries.forEach(entry => {
       const netHours = getNetHours(entry);
       hours += netHours;
-      
+
       const rateCents = settings?.hourly_rate_cents || 0;
       const grossCents = netHours * rateCents;
       earnings += grossCents;
@@ -170,7 +170,7 @@ export default function ReportsPage() {
       const h = getNetHours(e);
       hours += h;
       const earningsStr = formatMoney(h * rateCents);
-      
+
       // Calculate total break duration
       let breakDurationMinutes = 0;
       e.breaks?.forEach(b => {
@@ -215,7 +215,7 @@ export default function ReportsPage() {
     const shiftsList = filtered.map(e => {
       const h = getNetHours(e);
       hours += h;
-      
+
       let breakDurationMinutes = 0;
       e.breaks?.forEach(b => {
         if (b.end_time) {
@@ -254,24 +254,24 @@ export default function ReportsPage() {
 
     try {
       const htmlToImage = await import('html-to-image');
-      
+
       const imgData = await htmlToImage.toPng(element, {
         pixelRatio: 2,
         backgroundColor: '#ffffff'
       });
-      
+
       const jspdfModule = (await import('jspdf')) as any;
       const jsPDF = jspdfModule.jsPDF || jspdfModule.default;
-      
+
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      
+
       const imgWidth = pdfWidth;
       const imgHeight = (element.offsetHeight * imgWidth) / element.offsetWidth;
-      
+
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       pdf.save(`Schmidt-Construction-1099-${type}-report-${type === 'daily' ? selectedDate : selectedWeekStart}.pdf`);
-      
+
       setActionMessage({ type: 'success', text: 'PDF report generated and downloaded successfully!' });
     } catch (err: any) {
       console.error(err);
@@ -384,31 +384,28 @@ export default function ReportsPage() {
       <div className="flex border-b border-slate-200 gap-1 bg-slate-100 p-1.5 rounded-xl max-w-md">
         <button
           onClick={() => { setActiveTab('annual'); setActionMessage(null); }}
-          className={`flex-1 py-2 text-center text-sm font-semibold rounded-lg transition-all ${
-            activeTab === 'annual'
+          className={`flex-1 py-2 text-center text-sm font-semibold rounded-lg transition-all ${activeTab === 'annual'
               ? 'bg-white text-blue-700 shadow-sm'
               : 'text-slate-500 hover:text-slate-800'
-          }`}
+            }`}
         >
           Annual 1099
         </button>
         <button
           onClick={() => { setActiveTab('daily'); setActionMessage(null); }}
-          className={`flex-1 py-2 text-center text-sm font-semibold rounded-lg transition-all ${
-            activeTab === 'daily'
+          className={`flex-1 py-2 text-center text-sm font-semibold rounded-lg transition-all ${activeTab === 'daily'
               ? 'bg-white text-blue-700 shadow-sm'
               : 'text-slate-500 hover:text-slate-800'
-          }`}
+            }`}
         >
           Daily Report
         </button>
         <button
           onClick={() => { setActiveTab('weekly'); setActionMessage(null); }}
-          className={`flex-1 py-2 text-center text-sm font-semibold rounded-lg transition-all ${
-            activeTab === 'weekly'
+          className={`flex-1 py-2 text-center text-sm font-semibold rounded-lg transition-all ${activeTab === 'weekly'
               ? 'bg-white text-blue-700 shadow-sm'
               : 'text-slate-500 hover:text-slate-800'
-          }`}
+            }`}
         >
           Weekly Report
         </button>
@@ -416,11 +413,10 @@ export default function ReportsPage() {
 
       {/* Action Notifications */}
       {actionMessage && (
-        <div className={`p-4 rounded-xl flex items-start space-x-3 border ${
-          actionMessage.type === 'success' 
-            ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
+        <div className={`p-4 rounded-xl flex items-start space-x-3 border ${actionMessage.type === 'success'
+            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
             : 'bg-red-50 border-red-200 text-red-800'
-        }`}>
+          }`}>
           {actionMessage.type === 'success' ? <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" /> : <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />}
           <span className="text-sm font-medium">{actionMessage.text}</span>
         </div>
@@ -597,11 +593,11 @@ export default function ReportsPage() {
             /* Live letterhead preview container */
             <div className="bg-slate-200 p-8 rounded-2xl shadow-inner max-w-4xl mx-auto">
               <div className="text-[10px] text-slate-400 font-bold text-center uppercase tracking-wider mb-2">Live Document Letterhead Preview</div>
-              
+
               <div ref={dailyReportRef} className="bg-white p-12 shadow-md max-w-[210mm] min-h-[297mm] mx-auto text-slate-800" style={{ fontFamily: 'Inter, sans-serif' }}>
                 {/* Accent line */}
                 <div className="h-1.5 bg-[#206BD4] w-full mb-6"></div>
-                
+
                 {/* walls2.com Letterhead header */}
                 <div className="flex justify-between border-b-2 border-slate-100 pb-6 mb-8">
                   <div>
@@ -654,7 +650,7 @@ export default function ReportsPage() {
                   <tbody className="divide-y divide-slate-100">
                     {dailyShiftsForEmail.map((s, idx) => (
                       <tr key={idx}>
-                        <td className="py-3.5 px-3">{s.date}<br/><span className="text-[10px] text-slate-500 font-medium">{s.clockIn} - {s.clockOut}</span></td>
+                        <td className="py-3.5 px-3">{s.date}<br /><span className="text-[10px] text-slate-500 font-medium">{s.clockIn} - {s.clockOut}</span></td>
                         <td className="py-3.5 px-3 font-semibold text-slate-900">{s.project}</td>
                         <td className="py-3.5 px-3 text-slate-500 text-center font-medium">{s.breaks}</td>
                         <td className="py-3.5 px-3 text-right font-semibold">{s.duration} hrs</td>
@@ -733,11 +729,11 @@ export default function ReportsPage() {
             /* Live letterhead preview container */
             <div className="bg-slate-200 p-8 rounded-2xl shadow-inner max-w-4xl mx-auto">
               <div className="text-[10px] text-slate-400 font-bold text-center uppercase tracking-wider mb-2">Live Document Letterhead Preview</div>
-              
+
               <div ref={weeklyReportRef} className="bg-white p-12 shadow-md max-w-[210mm] min-h-[297mm] mx-auto text-slate-800" style={{ fontFamily: 'Inter, sans-serif' }}>
                 {/* Accent line */}
                 <div className="h-1.5 bg-[#206BD4] w-full mb-6"></div>
-                
+
                 {/* walls2.com Letterhead header */}
                 <div className="flex justify-between border-b-2 border-slate-100 pb-6 mb-8">
                   <div>
@@ -790,7 +786,7 @@ export default function ReportsPage() {
                   <tbody className="divide-y divide-slate-100">
                     {weeklyShiftsForEmail.map((s, idx) => (
                       <tr key={idx}>
-                        <td className="py-3.5 px-3">{s.date}<br/><span className="text-[10px] text-slate-500 font-medium">{s.clockIn} - {s.clockOut}</span></td>
+                        <td className="py-3.5 px-3">{s.date}<br /><span className="text-[10px] text-slate-500 font-medium">{s.clockIn} - {s.clockOut}</span></td>
                         <td className="py-3.5 px-3 font-semibold text-slate-900">{s.project}</td>
                         <td className="py-3.5 px-3 text-slate-500 text-center font-medium">{s.breaks}</td>
                         <td className="py-3.5 px-3 text-right font-semibold">{s.duration} hrs</td>
