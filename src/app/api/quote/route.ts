@@ -101,9 +101,14 @@ export async function POST(req: NextRequest) {
             <p style="margin:0 0 8px;color:#15803d;font-weight:700;font-size:14px;">Your Project Summary</p>
             <p style="margin:0;color:#166534;font-size:13px;line-height:1.7;white-space:pre-wrap;">${body || `Service: ${service}`}</p>
           </div>
-          <p style="color:#64748b;font-size:14px;line-height:1.7;margin:0;">Can't wait? Give us a call:<br/>
+          <p style="color:#64748b;font-size:14px;line-height:1.7;margin:0 0 28px;">Can't wait? Give us a call:<br/>
             <a href="tel:+14023202600" style="color:#2563eb;font-weight:700;font-size:16px;">(402) 320-2600</a>
           </p>
+          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:22px 24px;text-align:center;">
+            <p style="margin:0 0 6px;color:#1d4ed8;font-weight:700;font-size:15px;">Track your request in our Customer Portal</p>
+            <p style="margin:0 0 16px;color:#475569;font-size:13px;line-height:1.6;">Create a password with this email address to follow your project's status, add remarks, and message our team directly.</p>
+            <a href="https://schmidtportals.netlify.app/portal?email=${encodeURIComponent(email)}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 26px;border-radius:8px;">View Customer Portal &rarr;</a>
+          </div>
         </td></tr>
         <tr><td style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:20px 40px;">
           <p style="margin:0;color:#94a3b8;font-size:12px;">Schmidt Construction · Omaha, NE · Family-owned since 1973</p>
