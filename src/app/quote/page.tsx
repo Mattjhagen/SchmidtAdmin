@@ -124,10 +124,10 @@ export default function QuotePage() {
       {/* Header */}
       <div style={{ background: '#0f172a', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <img src="/logo.png" alt="Schmidt Construction" style={{ height: 40, width: 'auto' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+          <img src="/logo.png" alt="Schmidt Construction" style={{ height: 40, width: 'auto', background: '#fff', borderRadius: 6, padding: 3 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
           <span style={{ color: '#fff', fontWeight: 700, fontSize: 18 }}>Schmidt Construction</span>
         </div>
-        <a href="tel:+14023202600" style={{ color: '#f59e0b', fontWeight: 700, textDecoration: 'none', fontSize: 15 }}>
+        <a href="tel:+14023202600" style={{ color: '#4f94f2', fontWeight: 700, textDecoration: 'none', fontSize: 15 }}>
           (402) 320-2600
         </a>
       </div>
