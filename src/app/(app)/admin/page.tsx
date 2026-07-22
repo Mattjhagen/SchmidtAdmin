@@ -30,7 +30,9 @@ export default function AdminDashboard() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Site Editor</h1>
         <p className="text-slate-500 text-sm mt-1">
-          Changes made here appear on the public website immediately after saving.
+          Changes made here appear on the public website (
+          <a href="https://walls2.com" target="_blank" rel="noopener" className="text-yellow-600 hover:underline">walls2.com</a>
+          ) immediately after saving — just refresh the page.
         </p>
       </div>
 

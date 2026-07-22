@@ -1626,6 +1626,13 @@ export const siteContentDb = {
     return data;
   },
 
+  async createPortfolioItems(items: Omit<PortfolioItem, 'id' | 'created_at' | 'updated_at'>[]): Promise<PortfolioItem[]> {
+    if (!supabase || items.length === 0) return [];
+    const { data, error } = await supabase.from('portfolio_items').insert(items).select();
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  },
+
   async updatePortfolioItem(id: string, updates: Partial<Omit<PortfolioItem, 'id' | 'created_at' | 'updated_at'>>): Promise<PortfolioItem | null> {
     if (!supabase) return null;
     const { data, error } = await supabase.from('portfolio_items').update(updates).eq('id', id).select().single();

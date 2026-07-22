@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { siteContentDb, type SiteConfigMap } from '@/lib/db';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 const fields: { key: keyof SiteConfigMap; label: string; multiline?: boolean; hint?: string }[] = [
   { key: 'phone', label: 'Phone Number', hint: 'Display format, e.g. (402) 555-0100' },
@@ -14,6 +15,8 @@ const fields: { key: keyof SiteConfigMap; label: string; multiline?: boolean; hi
   { key: 'tagline', label: 'Tagline', hint: 'Shown in hero and footer' },
   { key: 'about_text', label: 'About Text', multiline: true, hint: 'Shown on the About page' },
 ];
+
+const heroSlides = [1, 2, 3, 4] as const;
 
 export default function SiteInfoEditor() {
   const [config, setConfig] = useState<Partial<SiteConfigMap>>({});
@@ -85,6 +88,23 @@ export default function SiteInfoEditor() {
             )}
           </div>
         ))}
+
+        <div className="border-t border-slate-200 pt-5">
+          <h2 className="font-bold text-slate-900 mb-1">Homepage Hero Photos</h2>
+          <p className="text-xs text-slate-400 mb-4">
+            The 4 big rotating photos at the top of the homepage. Leave a slot empty to keep the current photo.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {heroSlides.map(n => (
+              <ImageUploader
+                key={n}
+                label={`Hero Photo ${n}`}
+                currentUrl={config[`hero_image_${n}`] || undefined}
+                onUploaded={url => setConfig(prev => ({ ...prev, [`hero_image_${n}`]: url }))}
+              />
+            ))}
+          </div>
+        </div>
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
         {saved && <p className="text-green-600 text-sm font-medium">✓ Changes saved.</p>}

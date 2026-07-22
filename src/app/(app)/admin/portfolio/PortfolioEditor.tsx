@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { siteContentDb, type PortfolioItem } from '@/lib/db';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { services } from '@/content/services';
+import { websitePhotos } from '@/content/websitePhotos';
 
 const emptyForm = (): Omit<PortfolioItem, 'id' | 'created_at' | 'updated_at'> => ({
   title: '',
@@ -23,6 +24,7 @@ export default function PortfolioEditor() {
   const [editingId, setEditingId] = useState<string | 'new' | null>(null);
   const [form, setForm] = useState(emptyForm());
   const [saving, setSaving] = useState(false);
+  const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -78,6 +80,20 @@ export default function PortfolioEditor() {
     }
   }
 
+  async function handleImportWebsitePhotos() {
+    if (!confirm(`Import the ${websitePhotos.length} photos currently on the public website? You can then edit or delete each one here.`)) return;
+    setImporting(true);
+    setError(null);
+    try {
+      const created = await siteContentDb.createPortfolioItems(websitePhotos);
+      setItems(prev => [...prev, ...created].sort((a, b) => a.sort_order - b.sort_order));
+    } catch (e: any) {
+      setError('Import failed: ' + e.message);
+    } finally {
+      setImporting(false);
+    }
+  }
+
   async function handleDelete(id: string) {
     if (!confirm('Delete this portfolio item?')) return;
     try {
@@ -107,8 +123,20 @@ export default function PortfolioEditor() {
       {loading && <p className="text-slate-500 text-sm">Loading...</p>}
 
       {!loading && items.length === 0 && editingId !== 'new' && (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-10 text-center text-slate-500 text-sm">
-          No portfolio items yet. Add your first project above.
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-10 text-center text-slate-500 text-sm space-y-4">
+          <p>No portfolio items yet.</p>
+          <p>
+            Start by importing the photos already on the website — then you can edit titles,
+            re-order, delete, or add new ones, and the public site updates instantly.
+          </p>
+          <button
+            onClick={handleImportWebsitePhotos}
+            disabled={importing}
+            className="bg-slate-800 hover:bg-slate-900 disabled:opacity-50 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors"
+          >
+            {importing ? 'Importing…' : `⬇ Import ${websitePhotos.length} current website photos`}
+          </button>
+          {error && <p className="text-red-600 text-sm">{error}</p>}
         </div>
       )}
 
