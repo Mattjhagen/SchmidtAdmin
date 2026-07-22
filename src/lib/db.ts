@@ -1572,7 +1572,19 @@ export const db = {
 
 // ---------------------------------------------------------------------------
 // Site Content (portfolio, site_config, service_overrides)
+// Reads use the public anon client (RLS allows public SELECT).
+// Writes go through admin-verified server actions (service role), because
+// RLS does not grant the browser's authenticated role write access.
 // ---------------------------------------------------------------------------
+
+import {
+  createPortfolioItemAction,
+  createPortfolioItemsAction,
+  updatePortfolioItemAction,
+  deletePortfolioItemAction,
+  updateSiteConfigBatchAction,
+  upsertServiceOverrideAction,
+} from '@/app/actions/siteContent';
 
 export interface PortfolioItem {
   id: string;
@@ -1620,30 +1632,27 @@ export const siteContentDb = {
   },
 
   async createPortfolioItem(item: Omit<PortfolioItem, 'id' | 'created_at' | 'updated_at'>): Promise<PortfolioItem | null> {
-    if (!supabase) return null;
-    const { data, error } = await supabase.from('portfolio_items').insert([item]).select().single();
-    if (error) throw new Error(error.message);
-    return data;
+    const res = await createPortfolioItemAction(item);
+    if (!res.success) throw new Error(res.error);
+    return res.data ?? null;
   },
 
   async createPortfolioItems(items: Omit<PortfolioItem, 'id' | 'created_at' | 'updated_at'>[]): Promise<PortfolioItem[]> {
-    if (!supabase || items.length === 0) return [];
-    const { data, error } = await supabase.from('portfolio_items').insert(items).select();
-    if (error) throw new Error(error.message);
-    return data ?? [];
+    if (items.length === 0) return [];
+    const res = await createPortfolioItemsAction(items);
+    if (!res.success) throw new Error(res.error);
+    return res.data ?? [];
   },
 
   async updatePortfolioItem(id: string, updates: Partial<Omit<PortfolioItem, 'id' | 'created_at' | 'updated_at'>>): Promise<PortfolioItem | null> {
-    if (!supabase) return null;
-    const { data, error } = await supabase.from('portfolio_items').update(updates).eq('id', id).select().single();
-    if (error) throw new Error(error.message);
-    return data;
+    const res = await updatePortfolioItemAction(id, updates);
+    if (!res.success) throw new Error(res.error);
+    return res.data ?? null;
   },
 
   async deletePortfolioItem(id: string): Promise<void> {
-    if (!supabase) return;
-    const { error } = await supabase.from('portfolio_items').delete().eq('id', id);
-    if (error) throw new Error(error.message);
+    const res = await deletePortfolioItemAction(id);
+    if (!res.success) throw new Error(res.error);
   },
 
   // Site Config
@@ -1655,20 +1664,15 @@ export const siteContentDb = {
   },
 
   async updateSiteConfig(key: string, value: string): Promise<void> {
-    if (!supabase) return;
-    const { error } = await supabase
-      .from('site_config')
-      .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
-    if (error) throw new Error(error.message);
+    const res = await updateSiteConfigBatchAction({ [key]: value });
+    if (!res.success) throw new Error(res.error);
   },
 
   async updateSiteConfigBatch(updates: Partial<SiteConfigMap>): Promise<void> {
-    if (!supabase) return;
-    const rows = Object.entries(updates).map(([key, value]) => ({
-      key, value, updated_at: new Date().toISOString(),
-    }));
-    const { error } = await supabase.from('site_config').upsert(rows, { onConflict: 'key' });
-    if (error) throw new Error(error.message);
+    const clean: Record<string, string> = {};
+    Object.entries(updates).forEach(([k, v]) => { if (v !== undefined) clean[k] = v; });
+    const res = await updateSiteConfigBatchAction(clean);
+    if (!res.success) throw new Error(res.error);
   },
 
   // Service Overrides
@@ -1687,10 +1691,7 @@ export const siteContentDb = {
   },
 
   async upsertServiceOverride(slug: string, updates: { long_description?: string; image_url?: string }): Promise<void> {
-    if (!supabase) return;
-    const { error } = await supabase
-      .from('service_overrides')
-      .upsert({ slug, ...updates, updated_at: new Date().toISOString() }, { onConflict: 'slug' });
-    if (error) throw new Error(error.message);
+    const res = await upsertServiceOverrideAction(slug, updates);
+    if (!res.success) throw new Error(res.error);
   },
 };
