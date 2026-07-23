@@ -76,6 +76,10 @@ The cutover fought three separate Netlify issues:
 | Time clock | History migrated; owner confirmed "working like it never stopped" |
 | Old project `bumbtuwjukbxfnyrjhti` | Orphaned (login lost) — nothing references it |
 
+## TODO — first thing tomorrow
+
+- [ ] **Fix `SUPABASE_SERVICE_ROLE_KEY` in Netlify (schmidtportals)** — login works, but Messages shows *"Portal is not configured."* because the stored service key is the masked-bullet paste artifact and the new validator (correctly) rejects it. Delete the variable, re-create it, paste the real key from Supabase → Project Settings → API Keys (`service_role`, value ends in `aTbFYg` — reveal before copying, verify after pasting), then **Clear cache and deploy site**. This unblocks Messages, Site Editor saves, photo uploads, and employee onboarding — everything that runs server-side with the service key.
+
 ## Notes / Follow-ups
 - Service-page photos uploaded pre-migration lived in the old project's storage — re-upload via Site Editor → Service Pages.
 - Recreate employee accounts via the app's onboarding; re-run `timeclock-import.sql` if `purepulse@pm.me` is added (its settings row was skipped — no matching user yet).
