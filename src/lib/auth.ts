@@ -3,9 +3,7 @@
 
 import { isSupabaseConfigured } from './db';
 import { createBrowserClient } from '@supabase/ssr';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+import { SUPABASE_URL as supabaseUrl, SUPABASE_ANON_KEY as supabaseAnonKey } from './supabaseEnv';
 
 const supabase = isSupabaseConfigured ? createBrowserClient(supabaseUrl, supabaseAnonKey) : null;
 

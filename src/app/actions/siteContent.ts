@@ -9,6 +9,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { getSupabaseServer } from '@/lib/supabaseServer';
 import { isAdmin } from '@/lib/auth';
+import { SUPABASE_URL, getServiceRoleKey } from '@/lib/supabaseEnv';
 
 type Result<T = undefined> = { success: true; data?: T } | { success: false; error: string };
 
@@ -19,12 +20,11 @@ async function getServiceClient() {
     throw new Error('Unauthorized: Admin access required.');
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !serviceKey) {
-    throw new Error('Supabase service role key is not configured.');
+  const serviceKey = getServiceRoleKey();
+  if (!serviceKey) {
+    throw new Error('Supabase service role key is not configured (missing or contains invalid characters).');
   }
-  return createClient(url, serviceKey, {
+  return createClient(SUPABASE_URL, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }

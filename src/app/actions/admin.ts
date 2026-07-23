@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getSupabaseServer } from '@/lib/supabaseServer';
 import { isAdmin } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
+import { SUPABASE_URL, getServiceRoleKey } from '@/lib/supabaseEnv';
 
 async function verifyAdmin() {
   const supabase = await getSupabaseServer();
@@ -18,14 +19,13 @@ export async function onboardEmployee(payload: { email: string; name: string; te
   try {
     await verifyAdmin();
 
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceKey = getServiceRoleKey();
 
     if (!serviceKey) {
       return { success: false, error: 'Supabase Service Role Key is not configured in the environment.' };
     }
 
-    const adminClient = createClient(url, serviceKey, {
+    const adminClient = createClient(SUPABASE_URL, serviceKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false

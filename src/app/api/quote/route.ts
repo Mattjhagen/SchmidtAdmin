@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, getServiceRoleKey } from '@/lib/supabaseEnv';
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
 function getSupabaseAdmin() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   // Use service role key for unauthenticated inserts from public API
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key);
+  const key = getServiceRoleKey() || SUPABASE_ANON_KEY;
+  return createClient(SUPABASE_URL, key);
 }
 
 export async function POST(req: NextRequest) {

@@ -156,8 +156,7 @@ export default function ProjectDetailPage({ params }: PageProps) {
       let authToken: string | null = null;
       try {
         const { createClient } = await import('@supabase/supabase-js');
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
-        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+        const { SUPABASE_URL: supabaseUrl, SUPABASE_ANON_KEY: supabaseAnonKey } = await import('@/lib/supabaseEnv');
         if (supabaseUrl && supabaseAnonKey) {
           const client = createClient(supabaseUrl, supabaseAnonKey);
           const { data } = await client.auth.getSession();

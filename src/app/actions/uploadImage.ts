@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@supabase/supabase-js';
+import { SUPABASE_URL, getServiceRoleKey } from '@/lib/supabaseEnv';
 
 const BUCKET = 'marketing-images';
 
@@ -8,14 +9,12 @@ export async function uploadMarketingImage(formData: FormData): Promise<{ url: s
   const file = formData.get('file') as File | null;
   if (!file) return { error: 'No file provided' };
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !serviceKey) {
+  const serviceKey = getServiceRoleKey();
+  if (!serviceKey) {
     return { error: 'Supabase not configured' };
   }
 
-  const supabase = createClient(supabaseUrl, serviceKey);
+  const supabase = createClient(SUPABASE_URL, serviceKey);
 
   // Create the bucket if it doesn't exist yet
   const { data: buckets } = await supabase.storage.listBuckets();

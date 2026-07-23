@@ -14,8 +14,7 @@ import {
 } from './types';
 import { PROPOSAL_TEMPLATES } from './templates';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+import { SUPABASE_URL as supabaseUrl, SUPABASE_ANON_KEY as supabaseAnonKey } from './supabaseEnv';
 
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
 export const isDemoMode = !isSupabaseConfigured;

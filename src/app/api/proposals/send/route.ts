@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendProposalEmail } from "@/lib/email";
+import { SUPABASE_URL as supabaseUrl, SUPABASE_ANON_KEY as supabaseAnonKey } from "@/lib/supabaseEnv";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
 
 export async function POST(request: NextRequest) {

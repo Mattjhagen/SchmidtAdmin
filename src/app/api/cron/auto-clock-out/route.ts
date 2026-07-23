@@ -13,15 +13,15 @@ export async function GET(request: Request) {
   }
 
   // 2. Initialize Service Role Supabase Client
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const { SUPABASE_URL, getServiceRoleKey } = await import('@/lib/supabaseEnv');
+  const supabaseServiceKey = getServiceRoleKey();
 
-  if (!supabaseUrl || !supabaseServiceKey) {
+  if (!supabaseServiceKey) {
     console.error('Supabase Service Role Key missing');
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const supabase = createClient(SUPABASE_URL, supabaseServiceKey);
 
   // 3. Query all open shifts
   const { data: openShifts, error: fetchError } = await supabase
