@@ -1,2 +1,6 @@
 [build.environment]
   NEXT_DISABLE_NETLIFY_EDGE = "true"
+  # The Supabase anon key is public by design (shipped in every client bundle;
+  # row-level security is the actual protection), so exempt it from Netlify's
+  # secrets scanner, which otherwise fails the build when it appears in output.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_URL"
